@@ -1,0 +1,4 @@
+MANIFEST: manifest.tab
+REF_SITE: /net/eichler/vol28/projects/autism_genome_assembly/nobackups/qc/ntsm/db_source/human_sites_n10.fa
+CITES_CENTER: /net/eichler/vol28/projects/autism_genome_assembly/nobackups/qc/ntsm/db_source/human_sites_center.txt
+PCA_MATRIX: /net/eichler/vol28/projects/autism_genome_assembly/nobackups/qc/ntsm/db_source/human_sites_rotationalMatrix.tsv
