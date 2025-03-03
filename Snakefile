@@ -30,7 +30,7 @@ rule make_count:
         count_file = "ntsm_inv_counts/{id}.count",
     params:
         ref_site = REF_SITE,
-    threads: 4,
+    threads: 16,
     benchmark: "benchmark/ntsm_inv_counts/{id}.txt",
     resources:
         mem=lambda wildcards, attempt: 4 * attempt,
@@ -60,7 +60,7 @@ rule summary_target:
         "docker://eichlerlab/ntsm:1.2.1",
     shell:
         """
-        ntsmEval -a -t {threads} {input.target_count} {input.ref_all} | grep "{wildcards.id}\|homConcord" | sed -e 's/ntsm_inv_counts\//g' -e 's/\.count//g' > {output.summary}
+        ntsmEval -a -t {threads} {input.target_count} {input.ref_all} | grep "{wildcards.id}\|homConcord" | sed -e 's/ntsm_inv_counts\///g' -e 's/\.count//g' > {output.summary}
         """    
 
 rule all_pairwise:
