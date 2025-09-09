@@ -1,4 +1,2 @@
 MANIFEST: manifest.tab
-REF_SITE: /net/eichler/vol28/software/pipelines/ntsm_smk/db_source/human_sites_n10.fa
-CITES_CENTER: /net/eichler/vol28/software/pipelines/ntsm_smk/db_source/human_sites_center.txt
-PCA_MATRIX: /net/eichler/vol28/software/pipelines/ntsm_smk/db_source/human_sites_rotationalMatrix.tsv
+EXTERNAL_COUNTS_DIR: 1kg_srWGS_count_files
