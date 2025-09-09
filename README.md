@@ -31,9 +31,7 @@ SampleC	fofn/SampleC.fofn
 ### Config (`config.yaml`)
 Important keys:
 - `MANIFEST`: Path to the manifest file
-- `REF_SITE`: Reference sites fasta (default: `db_source/human_sites_n10.fa`)
-- `CITES_CENTER`: Reference center positions
-- `PCA_MATRIX`: Rotational matrix file
+- `REF_SITE`: Reference sites fasta (default: `db_source/human_sites_n10.fa`, relative to the Snakefile directory)
 - `EXTERNAL_COUNTS_DIR`: Directory containing external count files (optional)
 - `COUNT_FILE_EXP`: File extension for the external count files(default: `count`)
 

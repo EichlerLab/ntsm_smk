@@ -8,8 +8,6 @@ configfile: "config.yaml"
 SNAKEMAKE_DIR = os.path.dirname(workflow.snakefile)
 MANIFEST = config.get("MANIFEST", "manifest.tab")
 REF_SITE = config.get("REF_SITE", f"{SNAKEMAKE_DIR}/db_source/human_sites_n10.fa")
-CITES_CENTER = config.get("CITES_CENTER",f"{SNAKEMAKE_DIR}/db_source/human_sites_center.txt")
-PCA_MATRIX = config.get("PCA_MATRIX",f"{SNAKEMAKE_DIR}/db_source/human_sites_rotationalMatrix.tsv")
 EXTERNAL_COUNTS_DIR = config.get("EXTERNAL_COUNTS_DIR", "")
 COUNT_FILE_EXP = config.get("COUNT_FILE_EXP", "count")
 
