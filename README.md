@@ -1,5 +1,5 @@
 # ntsm_smk
-Snakemake pipeline for generating pairwise PCA distance matrices and visual summaries between sequencing datasets using NTSM(https://github.com/JustinChu/ntsm).
+Snakemake pipeline for generating pairwise PCA distance matrices and visual summaries between sequencing datasets using NTSM (https://github.com/JustinChu/ntsm).
 
 
 ## Requirements
