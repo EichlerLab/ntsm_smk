@@ -29,6 +29,10 @@ localrules:
 
 rule all:
     input:
+        "summary/matched_result.tsv"
+
+rule get_plot:
+    input:
         "summary/all_pairwise.pdf"
 
 rule get_all_count_files:
@@ -97,6 +101,50 @@ rule all_pairwise:
     shell: """
         ntsmEval -a -t {threads} {input.all_counts} {input.external_all_counts} | sed -e 's/external\///g' -e 's/count_files\///g' -e 's/\.count//g' > {output.summary}
         """    
+
+rule get_matched_summary:
+    input:
+        all_pairwise_summary = "summary/all_pairwise.tsv"
+    output:
+        matched_summary = "summary/matched_result.tsv"
+    threads: 1,
+    resources:
+        mem=16,
+        hrs=4,
+    run:
+        manifest_df = pd.read_csv(MANIFEST, sep="\t", header=0).set_index("ID", drop=True)
+        all_pairwise_df = pd.read_csv(input.all_pairwise_summary, sep="\t")
+        
+        matched_data = []
+        index_order = manifest_df.index.tolist()
+        index_order
+        for sample in index_order:
+            matched_samples = []
+            matched_distance = []
+            matched_relate = []
+            subset_df = all_pairwise_df[((all_pairwise_df["sample1"] == sample) | (all_pairwise_df["sample2"] == sample)) & (all_pairwise_df["same"]>0)]
+            if not subset_df.empty:
+                for idx,row in subset_df.iterrows():
+                    if row["sample1"] == sample:
+                        matched_samples.append(row["sample2"])
+                    elif row["sample2"] == sample:
+                        matched_samples.append(row["sample1"])
+                    matched_distance.append(format(row["score"],".4f"))
+                    matched_relate.append(format(row["relate"],".4f"))
+            else: # matched sample not found
+                subset_df = all_pairwise_df[((all_pairwise_df["sample1"] == sample) | (all_pairwise_df["sample2"] == sample))] # subset without matching.
+                closest_row = subset_df.loc[subset_df["relate"].idxmax()] # The highiest relate score result.
+                if closest_row["sample1"] == sample:
+                    closest_sample = closest_row["sample2"]
+                else:
+                    closest_sample = closest_row["sample1"]
+                matched_samples = [f"NotFound. Closest:{closest_sample}"]
+                matched_distance = [f"NA. Closest:{closest_row['score']}"]
+                matched_relate = [f"NA. Closest:{closest_row['relate']}"]                    
+
+            matched_data.append([sample, ",".join(matched_samples), ",".join(matched_distance), ",".join(matched_relate)])
+        matched_df = pd.DataFrame(matched_data, columns = ["ID","MATCHED_SAMPLE","SCORE","RELATE"])
+        matched_df.to_csv(output.matched_summary, sep="\t", index=False)
 
 rule plot_ntsm_summary:
     input:
