@@ -15,7 +15,7 @@ COUNT_FILE_EXP = config.get("COUNT_FILE_EXP", "count")
 COMPARE_ONLY_EXT = config.get("COMPARE_ONLY_EXT", False)
 ALN_PARAMS = config.get('ALN_PARAMS', '')
 ALN_REF = "/net/eichler/vol28/eee_shared/assemblies/hg38/no_alt/hg38.no_alt.fa" # fixed
-SVDPREFIX = "/net/eichler/vol26/7200/software/pipelines/vbi-smk/resource_files/finalout.vcf.gz" #fixed
+SVDPREFIX = config.get("SVDPREFIX", "/net/eichler/vol26/7200/software/pipelines/vbi-smk/resource_files/finalout.vcf.gz")
 
 command_dict = {}
 command_dict['ONT'] = 'minimap2 -ax map-ont -I 8G -t'
@@ -157,9 +157,9 @@ rule get_ntsm_all_pairwise_summary:
         external_all_counts = get_external_counts,
     output:
         summary = "summary/ntsm/all_pairwise.tsv",
-    threads: 4,
+    threads: 24,
     resources:
-        mem=lambda wildcards, attempt: 4 * attempt,
+        mem=lambda wildcards, attempt: 2 * attempt,
         hrs=24,
     singularity:
         "docker://eichlerlab/ntsm:1.2.1",
@@ -169,7 +169,8 @@ rule get_ntsm_all_pairwise_summary:
 
 rule get_matched_summary:
     input:
-        ntsm_summary = "summary/ntsm/ntsm_summary.tsv",
+        ntsm_quick_summary = "summary/ntsm/ntsm_summary.tsv",
+        ntsm_summary = "summary/ntsm/all_pairwise.tsv",
         all_vbi_summary = "summary/vbi/vbi_summary.tsv"
     output:
         matched_summary = "summary/matched_result.tsv"
@@ -209,6 +210,7 @@ rule get_matched_summary:
                     matched_relate.append(format(row["relate"],".4f"))
             else: # matched sample not found
                 subset_df = ntsm_summary_df[((ntsm_summary_df["sample1"] == sample) | (ntsm_summary_df["sample2"] == sample))] # subset without matching.
+                print (sample, subset_df)
                 closest_row = subset_df.loc[subset_df["relate"].idxmax()] # The highiest relate score result.
                 if closest_row["sample1"] == sample:
                     closest_sample = closest_row["sample2"]
@@ -300,8 +302,8 @@ rule map_reads:
     input:
         fofn = find_fofn,
     output:
-        bam = temp("temp/alignment/GRCh38/{id}.bam"),
-        bai = temp("temp/alignment/GRCh38/{id}.bam.bai")
+        bam = "alignment/GRCh38/{id}.bam",
+        bai = "alignment/GRCh38/{id}.bam.bai"
     resources:
         mem = 12,
         smem = 4,
